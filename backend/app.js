@@ -13,10 +13,7 @@ dotenv.config({ path: "backend/config/config.env" });
 
 const app = express();
 app.use(cors());
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-// app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 
 app.use(express.json({ limit: "50mb" }));
@@ -37,18 +34,15 @@ app.get("/api/v1/getkey", (req, res) =>
   res.status(200).json({ key: process.env.RAZORPAY_API_KEY })
 );
 
-// app.use(express.static(path.join(__dirname, "../frontend/build")));
-app.use(
-  express.static(
-    path.join(
-      path.dirname(new URL(import.meta.url).pathname),
-      "../frontend/build"
-    )
-  )
+// Serving the frontend
+const frontendBuildPath = path.join(
+  path.dirname(new URL(import.meta.url).pathname),
+  "../frontend/build"
 );
+app.use(express.static(frontendBuildPath));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"));
+  res.sendFile(path.resolve(frontendBuildPath, "index.html"));
 });
 
 // Middleware for Errors
